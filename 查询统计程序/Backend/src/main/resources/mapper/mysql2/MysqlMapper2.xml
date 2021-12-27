@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backend1.mapper.mysql2.MysqlMapper2">
+    <select id="getMoviesByYear" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT             movie_id,
+                           title,
+                           runtime,
+                           releasedate
+        FROM movie
+        WHERE YEAR(releasedate) = #{year}
+    </select>
+    <select id="getMoviesByYM" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie
+        WHERE
+            YEAR (releasedate) = #{year}
+          AND MONTH (releasedate) = #{month}
+    </select>
+    <select id="getMoviesByYQ" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie
+        WHERE
+            YEAR (releasedate) = #{year}
+          AND QUARTER (releasedate) = #{quarter}
+    </select>
+    <select id="getMoviesByTitle" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT             movie_id,
+                           title,
+                           runtime,
+                           releasedate
+        FROM movie
+        WHERE title like CONCAT(#{title},'%')
+    </select>
+    <select id="getMovieByTitle" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM movie
+        WHERE title = #{title}
+    </select>
+    <select id="getMoviesByDirector" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie_director
+        WHERE
+            director_name = #{directorName}
+    </select>
+    <select id="getMoviesByWriter" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie_writer
+        WHERE
+            writer_name = #{writerName}
+    </select>
+    <select id="getMoviesByActor" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie_actor
+        WHERE
+            actor_name = #{actorName}
+    </select>
+    <select id="getMoviesLeadingByActor" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie_actor
+        WHERE
+            actor_name = #{actorName}
+          AND isleading = "True"
+    </select>
+
+    <select id="getCoopAATop" resultType="com.example.backend1.entity.mysql.CoopAA">
+        SELECT
+        M1.actor_name AS actor1,
+        M2.actor_name AS actor2,
+        count(M1.movie_id) cooptimes
+        FROM
+        actor AS M1
+        JOIN actor M2 ON M1.movie_id = M2.movie_id
+        WHERE
+            M2.actor_id &lt; M1.actor_id
+        GROUP BY
+        M1.actor_id,
+        M2.actor_id
+        ORDER BY
+        cooptimes DESC
+        LIMIT 20
+    </select>
+    <select id="getCoopADTop" resultType="com.example.backend1.entity.mysql.CoopAD">
+        SELECT
+        actor_name as actor,
+        director_name as director,
+        count(movie_id) cooptimes
+        FROM
+        actor
+        NATURAL JOIN director
+        WHERE
+        actor_name &lt; director_name OR actor_name &gt; director_name
+        GROUP BY
+        actor_name,
+        director_name
+        ORDER BY
+        cooptimes DESC
+        LIMIT 20
+    </select>
+    <select id="getCoopAWTop" resultType="com.example.backend1.entity.mysql.CoopAW">
+        SELECT
+        actor_name as actor,
+        writer_name as writer,
+        count(movie_id) cooptimes
+        FROM
+        actor
+        NATURAL JOIN writer
+        WHERE
+        actor_name &lt; writer_name OR actor_name &gt; writer_name
+        GROUP BY
+        actor_name,
+        writer_name
+        ORDER BY
+        cooptimes DESC
+        LIMIT 20
+    </select>
+    <select id="getCoopDWTop" resultType="com.example.backend1.entity.mysql.CoopDW">
+        SELECT
+        director_name AS director,
+        writer_name AS writer,
+        count(movie_id) cooptimes
+        FROM
+        director
+        NATURAL JOIN writer
+        WHERE
+        director_name &lt; writer_name OR director_name &gt; writer_name
+        GROUP BY
+        director_name,
+        writer_name
+        ORDER BY
+        cooptimes DESC
+        LIMIT 20
+    </select>
+    <select id="getCoopADByActor" resultType="com.example.backend1.entity.mysql.CoopAD">
+        SELECT
+            actor_name AS actor,
+            director_name AS director,
+            count(director.movie_id) cooptimes
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    actor
+                WHERE
+                    actor_name = #{actor}
+            ) AS T
+                NATURAL JOIN director
+        GROUP BY
+            director_name
+        ORDER BY
+            cooptimes DESC
+    </select>
+    <select id="getCoopAAByActor" resultType="com.example.backend1.entity.mysql.CoopAA">
+        SELECT
+        T.actor_name AS actor1,
+        actor.actor_name AS actor2,
+        count(T.actor_name) cooptimes
+        FROM
+        (
+        SELECT
+        *
+        FROM
+        actor
+        WHERE
+        actor_name = #{actor}
+        ) AS T
+        JOIN actor ON T.movie_id = actor.movie_id
+        WHERE
+        actor.actor_name &lt; T.actor_name OR actor.actor_name &gt; T.actor_name
+        GROUP BY
+        actor.actor_name
+        ORDER BY
+        cooptimes DESC
+    </select>
+    <select id="getCoopAWByActor" resultType="com.example.backend1.entity.mysql.CoopAW">
+        SELECT
+            actor_name AS actor,
+            writer_name AS writer,
+            count(writer.movie_id) cooptimes
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    actor
+                WHERE
+                    actor_name = #{actor}
+            ) AS T
+                NATURAL JOIN writer
+        GROUP BY
+            writer_name
+        ORDER BY
+            cooptimes DESC
+    </select>
+    <select id="getCoopDWByDirector" resultType="com.example.backend1.entity.mysql.CoopDW">
+        SELECT
+            director_name AS director,
+            writer_name AS writer,
+            count(writer.movie_id) cooptimes
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    director
+                WHERE
+                    director_name = #{director}
+            ) AS T
+                NATURAL JOIN writer
+        GROUP BY
+            writer_name
+        ORDER BY
+            cooptimes DESC
+    </select>
+
+    <select id="getMoviesByGenres" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie
+                NATURAL JOIN genres
+        WHERE
+            genres_name = #{genres}
+    </select>
+    <select id="getGenresRanking" resultType="com.example.backend1.entity.mysql.Genres">
+        SELECT
+            genres_name AS genres,
+            count(movie_id) AS num
+        FROM
+            movie
+                NATURAL JOIN genres
+        GROUP BY
+            genres_name
+        ORDER BY
+            num DESC
+    </select>
+    <select id="getMoviesByScore" resultType="com.example.backend1.entity.mysql.MovieScore">
+        SELECT
+            movie_id,
+            title,
+            avgScore
+        FROM
+            (
+                SELECT
+                    movie_id,
+                    AVG(score) AS avgScore
+                FROM
+                    review
+                GROUP BY
+                    movie_id
+                HAVING
+                    avgScore &gt; #{score}
+            ) AS movieScore
+                NATURAL JOIN movie
+    </select>
+    <select id="getMoviesByReviewNum" resultType="com.example.backend1.entity.mysql.MovieReview">
+        SELECT
+            movie_id,
+            title,
+            reviewNum
+        FROM
+            (
+                SELECT
+                    movie_id,
+                    count(reviewer_id) AS reviewNum
+                FROM
+                    review
+                GROUP BY
+                    movie_id
+            ) AS movieScore
+                NATURAL JOIN movie
+        ORDER BY reviewNum DESC
+            LIMIT 20
+    </select>
+    <select id="getMoviesByCombination"  resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+        movie_id,
+        title,
+        runtime,
+        releasedate
+        FROM
+        movie
+        <where>
+            <if test="year != null">
+                YEAR (releasedate) = #{year}
+            </if>
+            <if test="month != null">
+                AND MONTH (releasedate) = #{month}
+            </if>
+            <if test="quarter != null">
+                AND QUARTER (releasedate) = #{quarter}
+            </if>
+            <if test="title != null">
+                AND title like CONCAT('%',#{title},'%')
+            </if>
+            <if test="actor != null">
+                AND movie_id in (
+                SELECT
+                movie_id
+                FROM
+                movie_actor
+                WHERE
+                actor_name = #{actor}
+                )
+            </if>
+            <if test="genres != null">
+                AND movie_id in (
+                SELECT
+                movie_id
+                FROM
+                genres
+                WHERE
+                genres_name = #{genres}
+                )
+            </if>
+            <if test="director != null">
+                AND movie_id in (
+                SELECT
+                movie_id
+                FROM
+                movie_director
+                WHERE
+                director_name = #{director}
+                )
+            </if>
+            <if test="score != null">
+                AND movie_id in (
+                SELECT
+                movie_id
+                FROM
+                (
+                SELECT
+                movie_id,
+                AVG(score) AS avgScore
+                FROM
+                review
+                GROUP BY
+                movie_id
+                HAVING
+                avgScore &gt; #{score} OR avgScore = #{score}
+                ) AS movieScore
+                NATURAL JOIN movie
+                )
+            </if>
+        </where>
+    </select>
+    <select id="getReviewsByMovie" resultType="com.example.backend1.entity.mysql.Review">
+        SELECT
+            reviewer_id AS reviewerID,
+            reviewer_name AS reviewerName,
+            review_time AS reviewTime,
+            score,
+            text,
+            summary
+        FROM
+            review
+        WHERE
+                movie_id IN (
+                SELECT
+                    movie_id
+                FROM
+                    movie
+                WHERE
+                    title = #{title}
+            )
+    </select>
+    <select id="getMoviesWithoutNegReview" resultType="com.example.backend1.entity.mysql.MovieDetail">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate
+        FROM
+            movie
+        WHERE
+                movie_id NOT IN (
+                SELECT
+                    movie_id
+                FROM
+                    review
+                WHERE
+                    helpness = "neg"
+                GROUP BY
+                    movie_id
+            )
+    </select>
+
+    <select id="getVersionByMovie" resultType="com.example.backend1.entity.mysql.MovieVersion">
+        SELECT
+            movie_id,
+            title,
+            runtime,
+            releasedate,
+            group_concat(product_asin) AS asin
+        FROM
+            movie
+                NATURAL JOIN product
+        WHERE
+            title = #{title}
+        GROUP BY movie_id
+    </select>
+
+</mapper>

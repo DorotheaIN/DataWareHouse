@@ -1,0 +1,4 @@
+create table movie_director(movie_id int, title string, runtime string, releasedate string, director_id string, director_name string)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/movie_director.txt' into table movie_director;

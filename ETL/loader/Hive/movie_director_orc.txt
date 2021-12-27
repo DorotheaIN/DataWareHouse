@@ -1,0 +1,6 @@
+create table movie_director(movie_id int, title string, runtime string, releasedate string, director_id string, director_name string)
+row format delimited fields terminated by ','
+stored as orc
+tblproperties("orc.compress"="NONE");
+
+insert into table movie_director_orc select * from movie_director

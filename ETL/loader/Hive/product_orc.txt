@@ -1,0 +1,6 @@
+create table product(product_asin string, movie_id int)
+row format delimited fields terminated by ','
+stored as orc
+tblproperties("orc.compress"="NONE");
+
+insert into table product_orc select * from product;

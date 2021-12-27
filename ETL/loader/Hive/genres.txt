@@ -1,0 +1,4 @@
+create table genres(movie_id int,genres_name string)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/genres.txt' into table ;genres

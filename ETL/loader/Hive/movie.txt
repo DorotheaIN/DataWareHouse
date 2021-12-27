@@ -1,0 +1,5 @@
+create table movie(movie_id int,title string,runtime string,releasedate string)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/movie.txt' into table movie;
+

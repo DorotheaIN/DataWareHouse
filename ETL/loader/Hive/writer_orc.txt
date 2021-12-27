@@ -1,0 +1,6 @@
+create table writer(movie_id intwriter_id int,writer_name)
+row format delimited fields terminated by ','
+stored as orc
+tblproperties("orc.compress"="NONE");
+
+insert into table writer_orc select * from writer

@@ -1,0 +1,6 @@
+create table review( movie_id int,reviewer_id string,review_time string,score float,text string,summary string,reviewer_name string,helpness string)
+row format delimited fields terminated by ','
+stored as orc
+tblproperties("orc.compress"="NONE");
+
+insert into table review_orc select * from review

@@ -1,0 +1,4 @@
+create table movie_actor(movie_id int,title string,runtime string,releasedate  string,actor_id int)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/movie_actor.txt' into movie_actor;

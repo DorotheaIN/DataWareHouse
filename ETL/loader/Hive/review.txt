@@ -1,0 +1,4 @@
+create table review( movie_id int,reviewer_id string,review_time string,score float,text string,summary string,reviewer_name string,helpness string)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/review.txt' into table review

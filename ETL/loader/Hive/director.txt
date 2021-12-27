@@ -1,0 +1,5 @@
+create table director(movie_id int,director_id int,director_name string)
+row format delimited fields terminated by ',';
+
+
+load data local inpath '/opt/module/data/director.txt' into table director;

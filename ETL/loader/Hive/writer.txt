@@ -1,0 +1,4 @@
+create table writer(movie_id intwriter_id int,writer_name)
+row format delimited fields terminated by ',';
+
+load data local inpath '/opt/module/data/writer.txt' into table writer;

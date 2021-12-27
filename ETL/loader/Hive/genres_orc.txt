@@ -1,0 +1,6 @@
+create table genres(movie_id int,genres_name string)
+row format delimited fields terminated by ','
+stored as orc
+tblproperties("orc.compress"="NONE");
+
+insert into table genres_orc select * from genres;

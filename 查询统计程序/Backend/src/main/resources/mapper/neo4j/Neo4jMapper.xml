@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backend1.mapper.neo4j.Neo4jMapper">
+
+    <select id="getTopCoopAA" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        with a1, m match (a2:Actor)-[:act]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getTopCoopAD" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        with a1, m match (a2:Director)-[:direct]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getTopCoopAW" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        with a1, m match (a2:Screenwriter)-[:write]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getTopCoopDW" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Director)-[:direct]->(m:Movie)
+        with a1, m match (a2:Screenwriter)-[:write]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getCoopAA" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        where a1.name = ${name}
+        with a1, m match (a2:Actor)-[:act]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getCoopAD" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        where a1.name = ${name}
+        with a1, m match (a2:Director)-[:direct]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getCoopAW" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Actor)-[:act]->(m:Movie)
+        where a1.name = ${name}
+        with a1, m match (a2:Screenwriter)-[:write]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+    <select id="getCoopDW" resultType="com.example.backend1.entity.neo4j.Coopration">
+        match(a1:Director)-[:direct]->(m:Movie)
+        where a1.name = ${name}
+        with a1, m match (a2:Screenwriter)-[:write]->(m:Movie)
+        with (a1.name + "+"  + a2.name) as n
+        where a1.name > a2.name or a2.name > a1.name
+        return distinct(n) as name, count(n) as count
+        order by count desc
+        limit 20
+    </select>
+
+
+
+</mapper>
